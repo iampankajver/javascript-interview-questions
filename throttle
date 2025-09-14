@@ -1,0 +1,37 @@
+import "./styles.css";
+
+function throttle(func, delay) {
+  let whenLastRun;
+  let timer;
+  return function () {
+    let context = this;
+    let args = arguments;
+
+    if (!whenLastRun || Date.now() - whenLastRun > delay) {
+      func.apply(context, args);
+      whenLastRun = Date.now();
+    } else {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (Date.now() - whenLastRun > delay) {
+          func.apply(context, args);
+          whenLastRun = Date.now();
+        }
+      }, delay - (Date.now() - whenLastRun));
+    }
+  };
+}
+
+export default function App() {
+  const onThrottle = throttle((e) => {
+    console.log("calling now: ", Date.now(), e);
+  }, 2500);
+
+  return (
+    <div className="App">
+      <h1>Hello CodeSandbox</h1>
+      <button onClick={onThrottle}>Throttling</button>
+      <h2>Start editing to see some magic happen!</h2>
+    </div>
+  );
+}
